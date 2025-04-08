@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+      {
+        protocol: 'https',
+        hostname: 'us-east-1.tixte.net',
+      },
     ],
   },
   poweredByHeader: false,
