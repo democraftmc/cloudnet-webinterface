@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
   compress: false,
   output: 'standalone',
   turbopack: {
+	...(process.env.TURBOPACK_ROOT && { root: process.env.TURBOPACK_ROOT }),
     resolveExtensions: [
       '.ts',
       '.tsx',

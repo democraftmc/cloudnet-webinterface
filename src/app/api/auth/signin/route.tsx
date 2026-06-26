@@ -64,27 +64,25 @@ export async function POST(request: NextRequest) {
     const host = url.hostname
     const ipVersion = net.isIP(host)
 
-    // Block localhost-style hosts explicitly
-    if (
-      host === 'localhost' ||
-      host === '127.0.0.1' ||
-      host === '::1'
-    ) {
-      throw new Error('Address not allowed')
-    }
-
-    // Block private/reserved IP ranges to mitigate SSRF to internal services
-    if (ipVersion) {
-      const octets = host.split('.').map(Number)
-      if (
-        // 10.0.0.0/8
-        (octets[0] === 10) ||
-        // 172.16.0.0/12
-        (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
-        // 192.168.0.0/16
-        (octets[0] === 192 && octets[1] === 168)
-      ) {
+    // Off by default: self-hosted CloudNet usually runs on loopback/LAN.
+    // Enable on public/multi-tenant instances to mitigate SSRF.
+    if (process.env.BLOCK_PRIVATE_ADDRESSES === 'true') {
+      if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
         throw new Error('Address not allowed')
+      }
+
+      if (ipVersion) {
+        const octets = host.split('.').map(Number)
+        if (
+          // 10.0.0.0/8
+          (octets[0] === 10) ||
+          // 172.16.0.0/12
+          (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+          // 192.168.0.0/16
+          (octets[0] === 192 && octets[1] === 168)
+        ) {
+          throw new Error('Address not allowed')
+        }
       }
     }
 
