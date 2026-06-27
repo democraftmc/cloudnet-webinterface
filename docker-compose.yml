@@ -17,8 +17,6 @@ services:
         - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
         - SENTRY_URL=${SENTRY_URL}
     container_name: cloudnet-webinterface
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
